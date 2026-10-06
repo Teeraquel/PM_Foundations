@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StreamLine Spotlight Final Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07162C;
+    --fg: #ffffff;
+    --muted: #ffffff;
+    --orange: #fb923c;
+    --orange-soft: #fdba74;
+    --cyan: #22d3ee;
+    --teal: #34d399;
+    --blue: #60a5fa;
+    --violet: #a78bfa;
+    --pink: #f472b6;
+    --border: rgba(251,146,60,0.25);
+    --card: rgba(255,255,255,0.035);
+    --head: "Saans", "Manrope", "Segoe UI", system-ui, sans-serif;
+    --body: "Saans", "Manrope", "Segoe UI", system-ui, sans-serif;
+    --mono: "Antarctican Mono", "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; background: var(--bg); }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+  /* Chrome */
+  .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 50; background: linear-gradient(90deg, var(--orange), var(--pink)); }
+  .dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 12px; }
+  .dots a { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--orange-soft); display: block; background: transparent; transition: transform .2s, background .2s; }
+  .dots a.active { background: var(--orange); border-color: var(--orange); transform: scale(1.25); }
+  .hint { position: fixed; left: 24px; bottom: 14px; z-index: 50; font: 400 11px var(--mono); letter-spacing: .08em; opacity: .5; }
+
+  /* Slides */
+  section { min-height: 100vh; scroll-snap-align: start; padding: clamp(32px, 5vh, 64px) clamp(28px, 5.5vw, 96px); display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .inner { width: 100%; max-width: 1360px; margin: 0 auto; }
+  .eyebrow { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--orange-soft); margin: 0 0 10px; }
+  h1, h2, h3 { font-family: var(--head); margin: 0; letter-spacing: -0.02em; }
+  h2 { font-weight: 800; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.08; margin-bottom: clamp(14px, 2.2vh, 26px); }
+  h3 { font-weight: 700; font-size: 17px; line-height: 1.25; margin-bottom: 8px; }
+  p { margin: 0; }
+  .small { font-size: 14px; }
+  .xs { font-size: 12.5px; line-height: 1.45; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+  .card.hero { background: linear-gradient(145deg, rgba(251,146,60,0.16), rgba(244,114,182,0.06) 60%, rgba(7,22,44,0) 100%); box-shadow: 0 18px 40px -22px rgba(0,0,0,.7); }
+  .card.key { box-shadow: 0 16px 34px -20px rgba(0,0,0,.75); }
+  .label { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--orange-soft); margin-bottom: 7px; display: block; }
+  .grid { display: grid; gap: 14px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 14px; font: 500 12.5px var(--mono); border: 1px solid var(--border); background: rgba(251,146,60,0.08); }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; background: var(--orange); color: #07162C; font: 700 15px var(--head); text-decoration: none; box-shadow: 0 10px 28px -12px rgba(251,146,60,.8); }
+  .btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--orange); box-shadow: none; }
+  .mono { font-family: var(--mono); }
+  .placeholder { border-style: dashed; background: transparent; min-height: 220px; }
+  .placeholder p { opacity: .72; font-style: italic; }
+
+  /* Cover */
+  .cover { background: radial-gradient(ellipse 70% 60% at 85% 10%, rgba(251,146,60,.22), transparent 70%), radial-gradient(ellipse 60% 50% at 0% 100%, rgba(34,211,238,.12), transparent 70%), var(--bg); }
+  .cover h1 { font-weight: 900; font-size: clamp(38px, 5.4vw, 82px); line-height: 1.02; max-width: 18ch; margin-bottom: 20px; }
+  .cover .pitch { font-size: clamp(18px, 1.8vw, 26px); max-width: 40ch; margin-bottom: 36px; }
+  .cover .meta { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; margin-bottom: 32px; }
+  .cover .meta div { font-size: 15px; }
+  .cover .meta .mono { font-size: 14px; word-break: break-all; }
+
+  /* Strategy */
+  .quote-big { font: 700 clamp(17px, 1.5vw, 22px)/1.4 var(--head); }
+  .callout { border-left: 4px solid var(--orange); background: linear-gradient(90deg, rgba(251,146,60,.14), rgba(251,146,60,0.02)); border-radius: 0 16px 16px 0; padding: 16px 22px; }
+  .callout p { font-size: clamp(14px, 1.15vw, 17px); }
+  .chips4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+  .chips4 .card { padding: 12px 14px; }
+
+  /* Research */
+  .evidence { font: 600 15px/1.45 var(--head); border-left: 3px solid var(--pink); padding-left: 14px; margin-top: 10px; }
+  .journey { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 16px; }
+  .stage { padding: 12px 14px; border: 1px solid var(--border); border-left: 0; background: var(--card); }
+  .stage:first-child { border-left: 1px solid var(--border); border-radius: 16px 0 0 16px; }
+  .stage:last-child { border-radius: 0 16px 16px 0; }
+  .stage .num { font: 500 11px var(--mono); letter-spacing: .12em; color: var(--cyan); text-transform: uppercase; }
+  .stage.misery { background: linear-gradient(160deg, rgba(244,114,182,.3), rgba(251,146,60,.14)); border: 1px solid var(--pink); box-shadow: 0 16px 34px -18px rgba(244,114,182,.55); }
+  .stage.misery .num { color: var(--pink); }
+  .stage h3 { font-size: 15px; margin: 4px 0 6px; }
+  .stage .bar { height: 4px; border-radius: 2px; margin-bottom: 8px; }
+
+  /* Blueprint */
+  .lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .lane { border-radius: 16px; padding: 14px; border: 1px solid var(--border); background: var(--card); }
+  .lane.now { background: linear-gradient(160deg, rgba(251,146,60,.2), rgba(251,146,60,.03)); box-shadow: 0 16px 34px -20px rgba(0,0,0,.75); }
+  .lane.cut { border-style: dashed; background: transparent; }
+  .lane h3 { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+  .lane .sub { font: 400 11px var(--mono); letter-spacing: .08em; margin-bottom: 10px; opacity: .8; }
+  .feat { border-radius: 12px; background: rgba(255,255,255,0.05); padding: 8px 11px; margin-bottom: 7px; }
+  .feat:last-child { margin-bottom: 0; }
+  .feat b { font-family: var(--head); font-weight: 700; font-size: 13.5px; display: block; line-height: 1.25; }
+  .feat span { font: 400 11px var(--mono); }
+  .lane.cut .feat b { text-decoration: line-through; text-decoration-color: var(--pink); }
+  .q-qw { color: var(--teal); } .q-mp { color: var(--blue); } .q-fi { color: var(--violet); } .q-ts { color: var(--pink); }
+  ul.tight { margin: 0; padding-left: 18px; }
+  ul.tight li { margin-bottom: 4px; }
+
+  /* Validation */
+  .vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; }
+  .vs .mid { display: grid; place-items: center; font: 800 18px var(--head); color: var(--orange); }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .stat { border-radius: 14px; border: 1px solid var(--border); padding: 11px 12px; background: var(--card); }
+  .stat .v { font: 500 clamp(18px, 1.7vw, 24px) var(--mono); line-height: 1.1; display: block; margin-top: 2px; }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .rule { border-radius: 14px; padding: 12px 16px; border: 1px solid var(--border); }
+  .rule .tag { display: inline-block; font: 500 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 7px; color: #07162C; }
+
+  /* Launch */
+  .dash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .metric .big { font: 500 clamp(24px, 2.4vw, 36px) var(--mono); line-height: 1; display: block; margin: 4px 0 8px; }
+  .bad { border: 1px solid var(--pink); background: linear-gradient(90deg, rgba(244,114,182,.16), rgba(244,114,182,.02)); border-radius: 16px; padding: 12px 18px; }
+  .bad ul { margin: 4px 0 0; padding-left: 18px; }
+  .timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .tstep { border-top: 3px solid var(--cyan); padding-top: 7px; }
+  .tstep b { font: 500 11.5px var(--mono); letter-spacing: .08em; color: var(--cyan); display: block; }
+  .chan { display: flex; flex-direction: column; gap: 8px; }
+  .chan .pill { border-radius: 14px; align-items: flex-start; line-height: 1.45; padding: 8px 14px; }
+
+  /* Story */
+  .story-q { display: flex; flex-direction: column; justify-content: center; }
+  .learn .card { padding: 18px 20px; }
+  .learn .bar { display: block; width: 36px; height: 4px; border-radius: 2px; margin-bottom: 12px; }
+  .learn p { font: 700 clamp(16px, 1.4vw, 20px)/1.3 var(--head); }
+
+  /* Submit */
+  .submit { background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(251,146,60,.22), transparent 70%), var(--bg); text-align: center; }
+  .submit h2 { font-size: clamp(44px, 6.4vw, 96px); font-weight: 900; margin-bottom: 4px; }
+  .submit .inner { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .submit .cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 999px; background: var(--orange); color: #07162C; font: 800 17px var(--head); box-shadow: 0 14px 34px -12px rgba(251,146,60,.85); }
+  .submit .cta i { width: 9px; height: 9px; border-radius: 50%; background: #07162C; }
+
+  @media (min-width: 1001px) and (max-height: 860px) {
+    section { padding-top: 22px; padding-bottom: 22px; }
+    h2 { font-size: 30px; margin-bottom: 12px; }
+    .eyebrow { margin-bottom: 6px; }
+    .xs { font-size: 11.5px; line-height: 1.38; }
+    .card, .stat, .rule, .lane { padding: 10px 13px; }
+    .grid, .lanes, .dash, .rules, .stats, .vs { gap: 9px; }
+    .callout { padding: 10px 16px; }
+    .callout p { font-size: 13.5px; }
+    .label { margin-bottom: 4px; }
+    .metric .big { font-size: 24px; margin: 2px 0 4px; }
+    .feat { padding: 6px 10px; margin-bottom: 5px; }
+    .lane h3 { font-size: 17px; }
+    .chan .pill { padding: 6px 12px; font-size: 11.5px; }
+    .bad { padding: 9px 14px; }
+    .btn { padding: 9px 18px; font-size: 14px; }
+    .hint { display: none; }
+    [style*="margin-bottom:12px"], [style*="margin-bottom:14px"] { margin-bottom: 9px !important; }
+  }
+  @media (max-width: 1000px) {
+    .g2, .g3, .lanes, .dash, .rules, .chips4 { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stats .stat { grid-column: auto !important; }
+    .journey { grid-template-columns: 1fr; gap: 8px; }
+    .stage, .stage:first-child, .stage:last-child { border: 1px solid var(--border); border-radius: 14px; }
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .vs { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .g2, .g3, .lanes, .dash, .rules, .chips4, .stats, .timeline { grid-template-columns: 1fr; }
+    .dots, .hint { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .dots a { transition: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<nav class="dots" id="dots" aria-label="Slides"></nav>
+<div class="hint" aria-hidden="true">↑ ↓ or Space to move · Home / End · Esc returns to cover</div>
+
+<!-- 1 · COVER -->
+<section class="cover" id="cover" data-title="Cover">
+  <div class="inner">
+    <p class="eyebrow">Product Management Final Project</p>
+    <h1>StreamLine SpotLight: A Personalized Discovery Rail</h1>
+    <p class="pitch">Find a title you'll love, with no need to search</p>
+    <div class="meta">
+      <div><span class="label">Presenter</span>Tenisha Holloway · Product Management Cohort · Jun 2026</div>
+      <div><span class="label">Repository</span><a class="mono" href="https://github.com/Teeraquel/PM_Foundations" target="_blank" rel="noopener">https://github.com/Teeraquel/PM_Foundations</a></div>
+    </div>
+    <div class="pills" style="gap:12px">
+      <a class="btn" href="https://www.figma.com/your-spotlight-prototype" target="_blank" rel="noopener">View prototype</a>
+      <a class="btn ghost" href="https://github.com/Teeraquel/PM_Foundations" target="_blank" rel="noopener">Open repo</a>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · STRATEGY -->
+<section id="strategy" data-title="Strategy">
+  <div class="inner">
+    <p class="eyebrow">Slide 05 · Strategy</p>
+    <h2>Problem hook &amp; value proposition</h2>
+    <div class="grid g2" style="margin-bottom:14px">
+      <div class="card hero">
+        <span class="label">Problem hook</span>
+        <p class="quote-big">If StreamLine doesn't launch StreamLine Spotlight, customer engagement will continue to plateau, the company will lose subscribers—and its market-leading position—to smaller, more specialized competitors who can better meet our customer's specific viewing demands.</p>
+      </div>
+      <div class="grid" style="gap:12px">
+        <div class="card key">
+          <span class="label">Value proposition</span>
+          <p>StreamLine Spotlight, offers our subscribers a personalized curated cinematic experience because our users are our greatest assets —without them we lose our market-leading position</p>
+        </div>
+        <div class="grid g2" style="gap:12px">
+          <div class="card">
+            <span class="label">Strategic crisis</span>
+            <p class="xs">Engagement will continue to plateau, and the company will lose subscribers—and its market-leading position—to smaller, specialized competitors</p>
+          </div>
+          <div class="card">
+            <span class="label">Moment of misery</span>
+            <p class="xs">Users will choose smaller more specialized streaming providers who can meet their specific viewing demands</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="label">Data-backed hypothesis</span>
+      <p>Based on subscriber retention data and cohort analysis, I believe that improving the search experience for the Casual Browser wanting to trust in-app recommendations will result in an increase in subscriber retention, as measured by a 4% change in Subscriber Retention I will protect subscriber retention and will make a go/no-go decision after 3 months.</p>
+    </div>
+    <div class="chips4">
+      <div class="card"><span class="label">Persona</span><p class="small">The Casual Browser</p></div>
+      <div class="card"><span class="label">Qualitative evidence</span><p class="xs">the inefficient search experience which wastes the casual browsers time forcing them to abandon the app</p></div>
+      <div class="card"><span class="label">Quantitative evidence</span><p class="xs">Content searched then played</p></div>
+      <div class="card"><span class="label">Decision window</span><p class="small mono">3-months</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · RESEARCH -->
+<section id="research" data-title="Research">
+  <div class="inner">
+    <p class="eyebrow">Slide 06 · Research</p>
+    <h2>The status quo to beat</h2>
+    <div class="grid g2">
+      <div class="card key">
+        <span class="label">Current workaround</span>
+        <div class="pills" style="margin-bottom:10px">
+          <span class="pill">DVD</span><span class="pill">YouTube</span><span class="pill">Competitors email newsletter</span><span class="pill">Word of mouth</span>
+        </div>
+        <ul class="tight xs">
+          <li>users have been forced to watch a title outside the app on a dvd</li>
+          <li>some users are choosing to watch their movie on YouTube instead of the app</li>
+          <li>one user watched the same 4 titles repeatedly to avoid searching for a new title due to feeling overwhelmed by the title search capabilities</li>
+        </ul>
+        <p class="evidence">"It froze on the loading spinner for a full minute, then kicked me to the home screen. I gave up and opened YouTube."</p>
+      </div>
+      <div class="grid" style="gap:12px">
+        <div class="card">
+          <span class="label">Core frustration</span>
+          <p class="small">The process breaks down when users abandon use of the app</p>
+        </div>
+        <div class="card">
+          <span class="label">Competitive advantages</span>
+          <ul class="tight xs">
+            <li><b>Relationship history / Loyalty</b>: our customers chose us for a reason. they like our product and are familiar with the platform. A better experience would make them want to remain</li>
+            <li><b>Catalog</b>: we have an extensive catalog of offerings which is one of the reasons our customers choose our app</li>
+            <li><b>Cost</b>: Other tools have associated costs for a premium experience (i.e., YouTube commercial free viewing)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey" role="list" aria-label="Journey map">
+      <div class="stage misery" role="listitem">
+        <span class="num">Today · Moment of misery</span>
+        <h3>Abandon</h3>
+        <div class="bar" style="background:var(--pink)"></div>
+        <p class="xs">user abandons the app due to search difficulties</p>
+      </div>
+      <div class="stage" role="listitem">
+        <span class="num">1 · Open</span>
+        <h3>Entry</h3>
+        <div class="bar" style="background:var(--cyan)"></div>
+        <p class="xs">user opens the app to watch something and a small set of suggested picks is displayed + neutral to optimistic about their experience but open to the suggestions + replaces the open ended browsing view</p>
+      </div>
+      <div class="stage" role="listitem">
+        <span class="num">2 · Evaluate</span>
+        <h3>Evaluate Top Picks</h3>
+        <div class="bar" style="background:var(--blue)"></div>
+        <p class="xs">user recognizes specificity of the top 3 suggested picks + decides to actively test the relevancy by choosing to watch a recommended pick + resolves the "I'm not a genre, I'm a person" complaint</p>
+      </div>
+      <div class="stage" role="listitem">
+        <span class="num">3 · Commit</span>
+        <h3>Commit &amp; Watch</h3>
+        <div class="bar" style="background:var(--violet)"></div>
+        <p class="xs">user is able to select a title quickly and begin watching with no blockers + this reduces cognitive fatigue by reducing the decision-making burden + removes the frustrations raised about feeling overwhelmed by having to scroll through too many titles</p>
+      </div>
+      <div class="stage" role="listitem">
+        <span class="num">4 · Return</span>
+        <h3>Reinforce Loyalty</h3>
+        <div class="bar" style="background:var(--teal)"></div>
+        <p class="xs">user returns expecting the same quality experience + users begin to trust the app again + users lose interest in competitor's options</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · BLUEPRINT -->
+<section id="blueprint" data-title="Blueprint">
+  <div class="inner">
+    <p class="eyebrow">Slide 07 · Blueprint</p>
+    <h2>Roadmap &amp; PRD highlights</h2>
+    <div class="lanes" style="margin-bottom:14px">
+      <div class="lane now">
+        <h3>Now</h3><div class="sub">3-week sprint · 2 engineers + 1 designer</div>
+        <div class="feat"><b>A1 Spotlight Curated Rail</b><span class="q-qw">Quick Win · Value 4 · Effort 2</span></div>
+      </div>
+      <div class="lane">
+        <h3>Next</h3><div class="sub">Following 1–2 sprints</div>
+        <div class="feat"><b>A2 'Why You'll Love This' Label</b><span class="q-mp">Major Project · Value 5 · Effort 3</span></div>
+        <div class="feat"><b>A4 Mood-Based Entry Point</b><span class="q-mp">Major Project · Value 4 · Effort 3</span></div>
+        <div class="feat"><b>A5 Personalized Spotlight Queue</b><span class="q-mp">Major Project · Value 4 · Effort 4</span></div>
+      </div>
+      <div class="lane">
+        <h3>Later</h3><div class="sub">Backlog</div>
+        <div class="feat"><b>A3 Hidden Gem Badge</b><span class="q-fi">Fill-In · Value 2 · Effort 1</span></div>
+        <div class="feat"><b>A6 Spotlight Digest Email</b><span class="q-fi">Fill-In · Value 3 · Effort 2</span></div>
+      </div>
+      <div class="lane cut">
+        <h3>Cut list</h3><div class="sub">Not part of Spotlight</div>
+        <div class="feat"><b>A7 Curator Profiles</b><span class="q-ts">Time Sinker · Value 2 · Effort 4</span></div>
+        <div class="feat"><b>A8 Watch Party (Spotlight)</b><span class="q-ts">Time Sinker · Value 1 · Effort 5</span></div>
+        <div class="feat"><b>A9 Advanced Filter Engine</b><span class="q-ts">Time Sinker · Value 2 · Effort 4</span></div>
+        <div class="feat"><b>A10 Offline Download (Spotlight)</b><span class="q-ts">Time Sinker · Value 1 · Effort 5</span></div>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card hero">
+        <span class="label">Vision</span>
+        <p class="small" style="font-weight:700;margin-bottom:12px">Every StreamLine subscriber finds something they'll love within seconds of opening the app, without ever needing to search.</p>
+        <div class="pills" style="margin-bottom:14px">
+          <span class="pill">Success: month-over-month subscriber retention rate</span>
+          <span class="pill">Guardrail: total weekly viewing hours per subscriber</span>
+        </div>
+        <a class="btn" href="https://www.figma.com/your-spotlight-prototype" target="_blank" rel="noopener">View prototype</a>
+      </div>
+      <div class="card">
+        <span class="label">Functional requirements</span>
+        <ul class="tight xs">
+          <li>The Spotlight rail is fully visible without scrolling at 1280×720 (desktop) and 390×844 (mobile).</li>
+          <li>The rail shows at least 6 and at most 10 titles.</li>
+          <li>On a kids' profile, 0 titles rated above the profile's maturity limit appear in the rail.</li>
+          <li>When fewer than 6 curated titles pass the availability, maturity, and watched checks, the rail is replaced by the fallback algorithmic rail in the same slot, with no empty state shown.</li>
+          <li>A user can go from homepage to playback in 2 taps or fewer (card, then Play).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="label">MoSCoW scope</span>
+        <ul class="tight xs">
+          <li><b style="color:var(--teal)">Must:</b> Rail placement above the fold on the homepage; Lightweight editorial tool to pick and order titles</li>
+          <li><b style="color:var(--blue)">Should:</b> Hide already-watched titles; One-line editorial hook per title</li>
+          <li><b style="color:var(--violet)">Could:</b> Trailer preview on focus</li>
+          <li><b style="color:var(--pink)">Won't (now):</b> Per-user personalization of the rail</li>
+        </ul>
+        <span class="label" style="margin-top:10px">Evals</span>
+        <ul class="tight xs">
+          <li><b>Accuracy:</b> 100% of rendered titles pass all checks</li>
+          <li><b>Time-on-task:</b> median of 20 seconds or less, and at least 30% faster than control</li>
+          <li><b>Safety:</b> 0 violations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · VALIDATION -->
+<section id="validation" data-title="Validation">
+  <div class="inner">
+    <p class="eyebrow">Slide 08 · Validation</p>
+    <h2>Experiment plan</h2>
+    <div class="callout" style="margin-bottom:12px">
+      <span class="label">Hypothesis</span>
+      <p>I believe that Spotlight Curated Rail a hand-picked selection of titles that sits at the top of every subscriber's homepage for The Casual Browser will result in will find something to watch faster, as measured by a + 2 change in +2 percentage point increase in the share of homepage sessions with a play start within 3 minutes within 14 days. We will protect weekly viewing hours per subscriber throughout the test.</p>
+    </div>
+    <div class="vs" style="margin-bottom:12px">
+      <div class="card">
+        <span class="label">Control (A)</span>
+        <p class="xs">The current homepage, with every existing row in its current order and no Spotlight rail</p>
+      </div>
+      <div class="mid">vs</div>
+      <div class="card key" style="border-color:rgba(251,146,60,.55)">
+        <span class="label">Variant (B)</span>
+        <p class="xs">The current homepage with a Spotlight rail inserted as row 1: exactly 8 title cards, fully visible without scrolling at 1280×720 (desktop) and 390×844 (mobile). All existing rows move down one position and are otherwise unchanged. Adult profiles only. The prototype control bar (profile switcher and A/B toggle) is removed from the test build.</p>
+      </div>
+    </div>
+    <div class="stats" style="margin-bottom:12px">
+      <div class="stat" style="grid-column: span 2"><span class="label">Primary metric</span><span class="xs">+2 percentage point increase in the share of homepage sessions with a play start within 3 minutes</span></div>
+      <div class="stat"><span class="label">Baseline</span><span class="v">10%</span></div>
+      <div class="stat"><span class="label">MDE</span><span class="v">+2</span></div>
+      <div class="stat"><span class="label">Sample / arm</span><span class="v">4,311</span></div>
+      <div class="stat"><span class="label">Split · days · α</span><span class="v" style="font-size:16px">50/50 · 14 · .05</span></div>
+      <div class="stat" style="grid-column: span 3"><span class="label">Guardrail</span><span class="xs">weekly viewing hours per subscriber: the 95% confidence interval's lower bound must stay above −2% relative to control</span></div>
+      <div class="stat" style="grid-column: span 3"><span class="label">Held constant</span><span class="xs">The content and order of all other rows, the recommendation and ranking algorithm, search, title artwork, pricing and promotions, app version, and the curated title list, which is frozen for the full test</span></div>
+    </div>
+    <div class="rules">
+      <div class="rule" style="border-color:var(--teal)"><span class="tag" style="background:var(--teal)">Ship</span><p class="xs">if +2 percentage point increase in the share of homepage sessions with a play start within 3 minutes improves by ≥ + 2 at .05 and weekly viewing hours per subscriber does not reach the 95% confidence interval's lower bound must stay above −2% relative to control after 14 days.</p></div>
+      <div class="rule" style="border-color:var(--cyan)"><span class="tag" style="background:var(--cyan)">Iterate</span><p class="xs">if direction is positive but lift is below the MDE.</p></div>
+      <div class="rule" style="border-color:var(--pink)"><span class="tag" style="background:var(--pink)">Kill</span><p class="xs">if the primary metric shows no improvement or moves negatively.</p><p class="xs" style="margin-top:6px;opacity:.85">The read date is fixed at the end of 14 days, no results reviewed before this date.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · LAUNCH -->
+<section id="launch" data-title="Launch">
+  <div class="inner">
+    <p class="eyebrow">Slide 09 · Launch</p>
+    <h2>Go-to-market &amp; success metrics</h2>
+    <div class="grid g2" style="margin-bottom:12px">
+      <div class="card hero">
+        <div class="pills" style="margin-bottom:10px">
+          <span class="pill">Goal: Engagement, Retention</span>
+          <span class="pill">Tier: M, Targeted</span>
+          <span class="pill">Stage 1: tier S</span>
+          <span class="pill">Stage 2: tier M</span>
+        </div>
+        <span class="label">Audience</span>
+        <p class="small" style="margin-bottom:8px">Current subscribers with at least 2 homepage sessions in the last 30 days that ended without a play start</p>
+        <span class="label">Staging</span>
+        <p class="xs">Stage 1 (tier S): Spotlight live for 50% of the target segment, 50% held out, for two full billing cycles, with no public activity. Stage 2 (tier M): full rollout and weekly picks posts, only if Stage 1 meets the retention target with guardrails intact.</p>
+      </div>
+      <div class="card">
+        <span class="label">Channels</span>
+        <div class="chan">
+          <span class="pill" style="border-color:var(--cyan)">Owned · In-app: one-line label on the Spotlight rail, shown to test-group users on their first 3 homepage views</span>
+          <span class="pill" style="border-color:var(--blue)">Owned · Email: re-engagement email to test-group users who haven't opened the app in 14+ days, featuring 3 Spotlight picks with a deep link to each title</span>
+          <span class="pill" style="border-color:var(--violet)">Owned · Stage 2: weekly Spotlight picks post featuring 3 titles, linking into the app</span>
+        </div>
+      </div>
+    </div>
+    <div class="dash" style="margin-bottom:12px">
+      <div class="card key metric"><span class="label">Primary · Retention</span><span class="big" style="color:var(--teal)">+1 pt</span><p class="xs">Month-over-month retention in the test group is at least 1 percentage point higher than the holdout, against a current baseline of 90% retention (10% monthly churn).</p></div>
+      <div class="card key metric"><span class="label">Guardrail · Viewing hours</span><span class="big" style="color:var(--blue)">≤ −2%</span><p class="xs">total weekly viewing hours per subscriber test vs. holdout - no more than 2% below holdout</p></div>
+      <div class="card key metric"><span class="label">Leading · Sessions without a play</span><span class="big" style="color:var(--cyan)">−15%</span><p class="xs">Homepage sessions ending without a play, test vs. holdout -15% by day 14</p></div>
+    </div>
+    <div class="bad" style="margin-bottom:12px">
+      <span class="label" style="color:var(--pink)">Bad signal to watch for</span>
+      <ul class="xs">
+        <li>Early warning is Spotlight play starts divided by Spotlight impressions, read weekly. If it stays below the top algorithmic rail for 2 straight weeks, the editor refreshes the curation approach.</li>
+        <li>Viewing hours: if test falls more than 2% below holdout for 2 straight weeks, the PM pauses Stage 1.</li>
+        <li>Sessions without a play: if the drop is under 5% at day 14 (Week 5), the PM and editor review picks and rail position.</li>
+      </ul>
+      <p class="xs" style="margin-top:6px"><b>Likely post-launch decision:</b> iterate - adjust messaging</p>
+    </div>
+    <div class="timeline">
+      <div class="tstep"><b>WEEK 1</b><p class="xs">Holdout split and event tracking built</p></div>
+      <div class="tstep"><b>WEEK 2</b><p class="xs">app-store submission. First 4 curated lists ready, licensing checked; Support FAQ and briefing</p></div>
+      <div class="tstep"><b>WEEK 3</b><p class="xs">start Stage 1</p></div>
+      <div class="tstep"><b>WEEK 4–11</b><p class="xs">monitor, collect feedback; Weekly curation refresh; weekly metrics readout</p></div>
+      <div class="tstep" style="border-color:var(--orange)"><b style="color:var(--orange)">WEEK 11</b><p class="xs">Go/no-go for Stage 2 (Executive Sponsor)</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · STORY -->
+<section id="story" data-title="Story">
+  <div class="inner">
+    <p class="eyebrow">Slide 10 · Story</p>
+    <h2>What I learned</h2>
+    <div class="grid g2" style="margin-bottom:14px">
+      <div class="card hero story-q">
+        <span class="label">Friction point + aha moment</span>
+        <p class="quote-big">Determining the metrics that indicate the need to pivot (bad signal to watch for) was challenging</p>
+      </div>
+      <div class="card key">
+        <span class="label">Next step</span>
+        <p class="quote-big">Stage 2 enhancements: include a weekly Spotlight picks post featuring 3 titles, linking into the app</p>
+      </div>
+    </div>
+    <span class="label">The biggest learnings</span>
+    <div class="grid g3 learn">
+      <div class="card"><span class="bar" style="background:var(--cyan)"></span><p>How to determine a repeatable win or a random ripple</p></div>
+      <div class="card"><span class="bar" style="background:var(--violet)"></span><p>Roadmaps prioritize problems, not features</p></div>
+      <div class="card"><span class="bar" style="background:var(--teal)"></span><p>Personas and journey maps are behavioral anchors</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · SUBMIT -->
+<section class="submit" id="submit" data-title="Thank you">
+  <div class="inner">
+    <p class="eyebrow">Final Project · Submission</p>
+    <h2>Thank you</h2>
+    <a class="mono" style="font-size:clamp(14px,1.4vw,18px);word-break:break-all" href="https://github.com/Teeraquel/PM_Foundations" target="_blank" rel="noopener">https://github.com/Teeraquel/PM_Foundations</a>
+    <div class="pills" style="justify-content:center">
+      <span class="pill">Tenisha Holloway</span>
+      <span class="pill">Product Management Cohort · Jun 2026</span>
+    </div>
+    <span class="cta"><i aria-hidden="true"></i>Submit to the learning platform</span>
+  </div>
+</section>
+
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section"));
+  var dots = document.getElementById("dots");
+  var bar = document.getElementById("progress");
+
+  sections.forEach(function (s, i) {
+    var a = document.createElement("a");
+    a.href = "#" + s.id;
+    a.setAttribute("aria-label", "Go to slide " + (i + 1) + ": " + s.dataset.title);
+    a.addEventListener("click", function (e) { e.preventDefault(); go(i); });
+    dots.appendChild(a);
+  });
+  var dotLinks = dots.querySelectorAll("a");
+
+  function current() {
+    var mid = window.scrollY + window.innerHeight / 3, idx = 0;
+    sections.forEach(function (s, i) { if (s.offsetTop <= mid) idx = i; });
+    return idx;
+  }
+  function update() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+    var c = current();
+    dotLinks.forEach(function (d, i) {
+      d.classList.toggle("active", i === c);
+      if (i === c) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current");
+    });
+  }
+  function go(i) {
+    i = Math.max(0, Math.min(sections.length - 1, i));
+    sections[i].scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  document.addEventListener("keydown", function (e) {
+    var c = current();
+    if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) { e.preventDefault(); go(c + 1); }
+    else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) { e.preventDefault(); go(c - 1); }
+    else if (e.key === "Home") { e.preventDefault(); go(0); }
+    else if (e.key === "End") { e.preventDefault(); go(sections.length - 1); }
+    else if (e.key === "Escape") { e.preventDefault(); go(0); }
+  });
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  update();
+})();
+</script>
+</body>
+</html>
