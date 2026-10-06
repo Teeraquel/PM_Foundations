@@ -4,7 +4,7 @@
 
 **Tenisha Holloway · Product Management Cohort · Jun 2026** · https://github.com/Teeraquel/PM_Foundations
 
-Prototype: https://06-launch/final-presentation.html
+Prototype: https://github.com/Teeraquel/PM_Foundations/blob/main/06-launch/final-presentation.html
 
 ---
 
