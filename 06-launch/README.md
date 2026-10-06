@@ -4,7 +4,7 @@
 
 **Tenisha Holloway · Product Management Cohort · Jun 2026** · https://github.com/Teeraquel/PM_Foundations
 
-Prototype: https://www.figma.com/your-spotlight-prototype
+Prototype: https://06-launch/final-presentation.html
 
 ---
 
