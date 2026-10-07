@@ -6,18 +6,19 @@
 
 ## Friction points
 
-_The biggest technical or strategic challenge you faced while developing your product concept._
+_Determining the metrics that indicate the need to pivot (bad signal to watch for) was challenging._
 
 _____
 
 ## Key learnings
 
-_A few surprising discoveries or insights you gained from the course overall._
+_The biggest learnings: how to determine a repeatable win or a random ripple, roadmaps prioritize problems, not features, Personas and journey maps are behavioral anchors
+Next Step - Stage 2 enhancements: include a weekly Spotlight picks post featuring 3 titles, linking into the app._
 
 _____
 
 ## Aha! moment
 
-_Your main "aha" moment during the project process._
+_The roadmap is the PM bible._
 
 _____
